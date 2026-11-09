@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#005293">
+  <title>Mi Expediente de Salud Ocupacional | ASADA Bijagua de Upala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body data-page="form">
+
+  <main class="wrap" id="main">
+    
+    <!-- Encabezado de expediente del usuario -->
+    <div class="card accent">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px">
+        <div>
+          <h1>Mi Expediente de Salud Ocupacional</h1>
+          <p id="info-colaborador" style="font-weight:700;color:var(--navy);font-size:1.05rem;margin:4px 0 12px">Cargando datos del colaborador...</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a id="btn-ver-ficha" class="btn sec sm" href="#" target="_blank">Ver Mi Ficha Oficial</a>
+          <a id="btn-ver-tarjeta" class="btn sec sm" href="#" target="_blank">Tarjeta de Bolsillo</a>
+        </div>
+      </div>
+
+      <div id="alerta-form" class="alert hidden" role="status" aria-live="polite"></div>
+
+      <!-- Barra de progreso -->
+      <div style="margin-top:12px">
+        <div id="progreso-texto" style="font-size:13.5px;font-weight:700;color:var(--navy)">Progreso del expediente: 0% completado</div>
+        <div class="bar">
+          <span id="progreso-barra"></span>
+        </div>
+        <small style="color:var(--mute)">Complete los campos requeridos marcados con asterisco (*) para garantizar su seguridad laboral.</small>
+      </div>
+    </div>
+
+    <!-- Formulario Completo -->
+    <form id="form-expediente">
+      
+      <!-- SECCIÓN 1: DATOS PERSONALES Y RESIDENCIA -->
+      <div class="card accent">
+        <h2 class="sec-title">1. Datos Personales y Residencia</h2>
+        <div class="grid">
+          <div>
+            <label for="f-nacimiento">Fecha de Nacimiento *</label>
+            <input id="f-nacimiento" name="nacimiento" type="date" required>
+          </div>
+          <div>
+            <label for="f-telefono">Teléfono Principal *</label>
+            <input id="f-telefono" name="telefono" type="tel" inputmode="tel" placeholder="Ej: 8888-9999" required>
+          </div>
+          <div>
+            <label for="f-telefono2">Teléfono Secundario (Opcional)</label>
+            <input id="f-telefono2" name="telefono2" type="tel" inputmode="tel" placeholder="Otro número">
+          </div>
+          <div>
+            <label for="f-email">Correo Electrónico</label>
+            <input id="f-email" name="email" type="email" placeholder="correo@ejemplo.com">
+          </div>
+          <div>
+            <label for="f-provincia">Provincia *</label>
+            <select id="f-provincia" name="provincia" required></select>
+          </div>
+          <div>
+            <label for="f-canton">Cantón *</label>
+            <select id="f-canton" name="canton" required></select>
+          </div>
+          <div>
+            <label for="f-distrito">Distrito *</label>
+            <select id="f-distrito" name="distrito" required></select>
+          </div>
+          <div>
+            <label for="f-barrio">Barrio, Caserío o Poblado</label>
+            <input id="f-barrio" name="barrio" placeholder="Ej: San Miguel, Las Brisas, etc.">
+          </div>
+          <div class="full">
+            <label for="f-direccion">Dirección Exacta de Residencia *</label>
+            <textarea id="f-direccion" name="direccion" placeholder="Señas exactas para localización en caso de emergencia" required></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 2: CONTACTOS ANTE EMERGENCIA -->
+      <div class="card accent c2">
+        <h2 class="sec-title">2. Contactos ante Emergencia</h2>
+        <p style="font-size:13px;color:var(--mute);margin-top:-8px;margin-bottom:16px">
+          Personas a quienes contactar de inmediato si ocurre un accidente o situación de salud en su jornada.
+        </p>
+        
+        <h3 style="color:var(--navy);margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:4px">Contacto 1 (Principal) *</h3>
+        <div class="grid" style="margin-bottom:20px">
+          <div>
+            <label for="f-c1-nombre">Nombre Completo *</label>
+            <input id="f-c1-nombre" name="c1_nombre" placeholder="Nombre y apellidos" required>
+          </div>
+          <div>
+            <label for="f-c1-parentesco">Parentesco *</label>
+            <input id="f-c1-parentesco" name="c1_parentesco" placeholder="Ej: Cónyuge, Madre, Hermano(a), Hijo(a)" required>
+          </div>
+          <div>
+            <label for="f-c1-tel">Teléfono Directo *</label>
+            <input id="f-c1-tel" name="c1_tel" type="tel" inputmode="tel" placeholder="Ej: 8888-1234" required>
+          </div>
+        </div>
+
+        <h3 style="color:var(--navy);margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:4px">Contacto 2 (Secundario)</h3>
+        <div class="grid">
+          <div>
+            <label for="f-c2-nombre">Nombre Completo</label>
+            <input id="f-c2-nombre" name="c2_nombre" placeholder="Nombre y apellidos">
+          </div>
+          <div>
+            <label for="f-c2-parentesco">Parentesco</label>
+            <input id="f-c2-parentesco" name="c2_parentesco" placeholder="Ej: Amigo(a), Vecino(a), Familiar">
+          </div>
+          <div>
+            <label for="f-c2-tel">Teléfono Directo</label>
+            <input id="f-c2-tel" name="c2_tel" type="tel" inputmode="tel" placeholder="Ej: 8888-5678">
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 3: INFORMACIÓN MÉDICA Y ANTECEDENTES -->
+      <div class="card accent c3">
+        <h2 class="sec-title">3. Ficha Médica y Antecedentes de Salud</h2>
+        <div class="grid">
+          <div>
+            <label for="f-sangre">Grupo Sanguíneo y Factor RH *</label>
+            <select id="f-sangre" name="sangre" required>
+              <option value="">Seleccione</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+          </div>
+          <div>
+            <label for="f-tetanos">Vacunación contra el Tétanos *</label>
+            <select id="f-tetanos" name="tetanos" required>
+              <option value="">Seleccione estado</option>
+              <option value="Al día">Al día (última dosis menor a 10 años)</option>
+              <option value="Incompleto">Incompleto / Vencido</option>
+              <option value="Desconocido">Desconocido</option>
+            </select>
+          </div>
+          <div>
+            <label for="f-hepb">Vacuna Hepatitis B</label>
+            <select id="f-hepb" name="hepb">
+              <option value="Completa">Completa (3 dosis)</option>
+              <option value="Incompleta">Incompleta</option>
+              <option value="No aplicada">No aplicada / Desconocida</option>
+            </select>
+          </div>
+          <div>
+            <label for="f-covid">Vacuna COVID-19</label>
+            <select id="f-covid" name="covid">
+              <option value="Al día">Al día</option>
+              <option value="Incompleta">Incompleta</option>
+              <option value="No aplicada">No aplicada</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="f-ebais">EBAIS o Centro de Salud CCSS de Adscripción *</label>
+            <input id="f-ebais" name="ebais" placeholder="Ej: EBAIS Bijagua, Clínica de Upala" required>
+          </div>
+          <div class="full">
+            <label for="f-alergias">Alergias Conocidas (Medicamentos, látex, picaduras de abejas/avispas, alimentos)</label>
+            <textarea id="f-alergias" name="alergias" placeholder="Describa aquí si es alérgico a la penicilina, analgésicos, picaduras de abejas, o indique 'Ninguna'"></textarea>
+          </div>
+          <div class="full">
+            <label for="f-cronicas">Enfermedades Crónicas o Diagnósticos (Hipertensión, diabetes, asma, epilepsia, cardíacas)</label>
+            <textarea id="f-cronicas" name="cronicas" placeholder="Indique padecimientos diagnosticados o 'Ninguna'"></textarea>
+          </div>
+          <div class="full">
+            <label for="f-medicamentos">Medicamentos de Uso Permanente</label>
+            <textarea id="f-medicamentos" name="medicamentos" placeholder="Nombre del medicamento, dosis y horario regular..."></textarea>
+          </div>
+          <div class="full">
+            <label for="f-cirugias">Hospitalizaciones o Cirugías Previas</label>
+            <textarea id="f-cirugias" name="cirugias" placeholder="Año aproximado y procedimiento..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 4: RIESGOS Y SALUD OCUPACIONAL -->
+      <div class="card accent">
+        <h2 class="sec-title">4. Riesgos Ocupacionales y Capacidad Laboral</h2>
+        <div class="grid">
+          <div>
+            <label for="f-confinados">Trabajo en Espacios Confinados (Tanques, cajas de válvulas)</label>
+            <select id="f-confinados" name="r_confinados">
+              <option value="Sin limitación">Sin limitación</option>
+              <option value="Con limitación">Con limitación médica</option>
+              <option value="No apto">No apto (claustrofobia/respiratorio)</option>
+            </select>
+          </div>
+          <div>
+            <label for="f-alturas">Trabajo en Alturas</label>
+            <select id="f-alturas" name="r_alturas">
+              <option value="Sin limitación">Sin limitación</option>
+              <option value="Con limitación">Con limitación</option>
+              <option value="No apto">No apto (vértigo/otro)</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="f-quimicos">Sensibilidad a Químicos de Potabilización (Cloro gas, hipoclorito, coagulantes)</label>
+            <textarea id="f-quimicos" name="r_quimicos" placeholder="Indique si presenta irritación o sensibilidad a químicos de tratamiento de agua..."></textarea>
+          </div>
+          <div class="full">
+            <label for="f-ayudas">Uso de Lentes Ópticos, Audífonos o Prótesis</label>
+            <input id="f-ayudas" name="ayudas" placeholder="Ej: Usa lentes para leer, prótesis dental, etc.">
+          </div>
+          <div class="full">
+            <label for="f-limitaciones">Limitaciones Físicas (Carga de peso pesado, fontanería, espalda/rodillas)</label>
+            <textarea id="f-limitaciones" name="limitaciones" placeholder="Describa cualquier restricción de esfuerzo o postura..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 5: PÓLIZAS, SEGURO Y ATENCIÓN -->
+      <div class="card accent c2">
+        <h2 class="sec-title">5. Seguro Social y Pólizas</h2>
+        <div class="grid">
+          <div>
+            <label for="f-ccss">Número de Asegurado CCSS</label>
+            <input id="f-ccss" name="ccss" placeholder="Número de carné o cédula">
+          </div>
+          <div>
+            <label for="f-ins">Póliza de Riesgos del Trabajo INS</label>
+            <input id="f-ins" name="ins" placeholder="Póliza ASADA Bijagua">
+          </div>
+          <div class="full">
+            <label for="f-hospital">Centro Médico / Hospital de Preferencia ante Traslado</label>
+            <input id="f-hospital" name="hospital" value="Hospital de Upala / CAIS" placeholder="Centro de salud de referencia">
+          </div>
+          <div class="full">
+            <label for="f-instrucciones">Instrucciones Especiales en Caso de Emergencia Médica</label>
+            <textarea id="f-instrucciones" name="instrucciones" placeholder="Instrucciones particulares para paramédicos o personal de primeros auxilios..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:36px">
+        <button id="btn-guardar-expediente" type="submit" class="btn" style="padding:14px 28px;font-size:15px">
+          💾 Guardar Expediente en la Base de Datos
+        </button>
+        <span style="font-size:13px;color:var(--mute)">Los cambios se almacenan directamente en Firebase Firestore.</span>
+      </div>
+
+    </form>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

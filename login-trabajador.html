@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#005293">
+  <title>Ingreso de Colaboradores | ASADA Bijagua de Upala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body data-page="login">
+
+  <main class="wrap narrow">
+    <form id="form-login" class="card accent">
+      <h1>Ingreso de Colaboradores</h1>
+      <p style="font-size:13.5px;color:var(--mute);margin-bottom:18px">
+        Acceda a su expediente de salud con su número de cédula y contraseña.
+      </p>
+
+      <div id="alerta-login" class="alert hidden" role="alert"></div>
+
+      <div style="margin-bottom:14px">
+        <label for="c">Número de Cédula (sin guiones)</label>
+        <input id="c" name="cedula" inputmode="numeric" placeholder="Número de cédula o DIMEX" autocomplete="username" required autofocus>
+      </div>
+
+      <div style="margin-bottom:20px">
+        <label for="p">Contraseña</label>
+        <input id="p" name="clave" type="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+
+      <button id="btn-submit-login" class="btn" style="width:100%;margin-bottom:14px">Ingresar</button>
+      
+      <div style="text-align:center;padding-top:10px;border-top:1px solid var(--line)">
+        <span style="font-size:13px;color:var(--mute)">¿Primera vez en el sistema?</span><br>
+        <a class="btn sec sm" href="registro-trabajador.html" style="margin-top:8px">Crear Mi Cuenta</a>
+      </div>
+    </form>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
