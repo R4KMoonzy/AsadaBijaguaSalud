@@ -128,7 +128,7 @@ function inicializarShell() {
   // Barra de gobierno y accesibilidad
   const topBarHtml = `
     <div class="gov-top-bar">
-      <span>República de Costa Rica — Acueductos Comunitarios | ASADA Bijagua de Upala</span>
+      <span>Panel de Salud — Acueductos Comunitarios | ASADA Bijagua de Upala</span>
       <div class="tools">
         <button type="button" id="btn-font-minus" aria-label="Reducir tamaño de letra">A-</button>
         <button type="button" id="btn-font-plus" aria-label="Aumentar tamaño de letra">A+</button>
