@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#005293">
+  <title>Mis Solicitudes | ASADA Bijagua de Upala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body data-page="solicitudes">
+  <main class="wrap">
+    <div class="card accent">
+      <h1>Mis Solicitudes</h1>
+      <p id="info-sol" style="font-weight:700;color:var(--navy);margin:4px 0 0"></p>
+      <p style="font-size:13.5px;color:var(--mute);margin:6px 0 0">Solicite citas médicas, justifique citas o reporte incapacidades. Administración revisará su solicitud y verá aquí la respuesta.</p>
+    </div>
+
+    <div id="alerta-sol" class="alert hidden" role="status" aria-live="polite"></div>
+
+    <form id="form-sol" class="card accent c2">
+      <h2 class="sec-title">Nueva Solicitud</h2>
+      <div class="grid">
+        <div class="full">
+          <label for="s-tipo">Tipo de solicitud *</label>
+          <select id="s-tipo" name="tipo" required>
+            <option value="Cita médica">Solicitud de cita médica (permiso)</option>
+            <option value="Justificación de cita">Justificación de cita ya realizada</option>
+            <option value="Incapacidad">Incapacidad</option>
+          </select>
+        </div>
+        <div>
+          <label for="s-inicio" id="lbl-fecha">Fecha *</label>
+          <input id="s-inicio" name="fechaInicio" type="date" required>
+        </div>
+        <div id="box-fin" class="hidden">
+          <label for="s-fin">Fin de la incapacidad *</label>
+          <input id="s-fin" name="fechaFin" type="date">
+        </div>
+        <div id="box-hora">
+          <label for="s-hora">Hora de la cita (opcional)</label>
+          <input id="s-hora" name="hora" type="time">
+        </div>
+        <div class="full">
+          <label for="s-motivo">Motivo / detalle *</label>
+          <textarea id="s-motivo" name="motivo" required placeholder="Describa brevemente el motivo de su solicitud..."></textarea>
+        </div>
+        <div class="full">
+          <label for="s-archivos">Documentos adjuntos</label>
+          <input id="s-archivos" name="archivos" type="file" multiple>
+          <small id="hint-adj" style="color:var(--mute)"></small><br>
+          <small style="color:var(--mute)">Formatos: PDF, JPG, PNG o WEBP. Máximo 5 MB por archivo.</small>
+        </div>
+      </div>
+      <button id="btn-enviar-sol" class="btn" style="margin-top:18px">Enviar Solicitud</button>
+    </form>
+
+    <h2 class="sec-title">Mi Historial de Solicitudes</h2>
+    <div class="stats" id="stats-sol"></div>
+    <div style="max-width:240px;margin-bottom:16px">
+      <label for="filtro-estado-sol">Filtrar por estado</label>
+      <select id="filtro-estado-sol">
+        <option value="">Todos</option>
+        <option>Pendiente</option>
+        <option>Autorizada</option>
+        <option>No autorizada</option>
+        <option>Cancelada</option>
+      </select>
+    </div>
+    <div id="lista-sol"><p class="vacio">Cargando historial...</p></div>
+  </main>
+
+  <script type="module" src="app.js"></script>
+  <script type="module" src="solicitudes.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#005293">
+  <title>Gestión de Solicitudes | ASADA Bijagua de Upala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body data-page="adminsol">
+  <main class="wrap" style="max-width:1240px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+      <div>
+        <h1 style="margin:0">Gestión de Solicitudes</h1>
+        <span style="font-size:13.5px;color:var(--mute)">Citas, justificaciones e incapacidades de los colaboradores</span>
+      </div>
+      <a class="btn sec sm" href="admin.html">← Volver al Panel</a>
+    </div>
+
+    <div id="alerta-sol-admin" class="alert hidden" role="status" aria-live="polite"></div>
+
+    <div class="sol-layout">
+      <aside class="card accent" style="margin:0">
+        <h2 style="font-size:1.05rem">Colaboradores</h2>
+        <input id="buscar-colab" type="search" placeholder="Buscar por nombre, cédula o puesto">
+        <div id="lista-colab" class="colab-list"></div>
+      </aside>
+      <section id="panel-sol"><p class="vacio">Cargando...</p></section>
+    </div>
+  </main>
+
+  <script type="module" src="app.js"></script>
+  <script type="module" src="solicitudes.js"></script>
+</body>
+</html>

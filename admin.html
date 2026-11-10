@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#005293">
+  <title>Panel Administrativo | ASADA Bijagua de Upala</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body data-page="admin">
+
+  <main class="wrap">
+    <div id="alerta-admin" class="alert hidden" role="alert" aria-live="polite"></div>
+
+    <!-- Puerta de acceso con clave administrativa -->
+    <div id="admin-gate">
+      <form id="form-admin-gate" class="card accent narrow" style="margin:40px auto">
+        <h1>Administración y Salud Ocupacional</h1>
+        <p style="font-size:13.5px;color:var(--mute);margin-bottom:18px">
+          Acceso reservado para la jefatura de la ASADA Bijagua de Upala y personal autorizado de salud ocupacional.
+        </p>
+        <div style="margin-bottom:16px">
+          <label for="admin-pass">Contraseña de Acceso</label>
+          <input id="admin-pass" type="password" placeholder="••••••••" autocomplete="current-password" required autofocus>
+        </div>
+        <button class="btn" style="width:100%">Ingresar al Panel</button>
+      </form>
+    </div>
+
+    <!-- Panel de control principal (se muestra al iniciar sesión) -->
+    <section id="admin-panel" class="hidden">
+      
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px">
+        <div>
+          <h1 style="margin:0">Panel de Expedientes de Colaboradores</h1>
+          <span style="font-size:13.5px;color:var(--mute)">Base de Datos en Tiempo Real — ASADA Bijagua de Upala</span>
+        </div>
+        <button class="btn sec sm" id="btn-cerrar-admin" type="button">Cerrar Sesión Administrativa</button>
+      </div>
+
+      <!-- Tarjetas de Estadísticas -->
+      <div class="stats" id="admin-stats" aria-label="Resumen de expedientes"></div>
+
+      <!-- Barra de Filtros y Búsqueda -->
+      <div class="card accent">
+        <h2 style="font-size:1.1rem;margin-bottom:14px">Filtrar Colaboradores</h2>
+        
+        <div class="filtros">
+          <div style="flex:2 1 240px">
+            <label for="filtro-busqueda">Buscar por cédula, nombre o puesto</label>
+            <input id="filtro-busqueda" type="search" placeholder="Escriba para filtrar al instante...">
+          </div>
+          <div>
+            <label for="filtro-sangre">Grupo Sanguíneo</label>
+            <select id="filtro-sangre">
+              <option value="">Todos los grupos</option>
+              <option value="O+">O+</option>
+              <option value="O-">O-</option>
+              <option value="A+">A+</option>
+              <option value="A-">A-</option>
+              <option value="B+">B+</option>
+              <option value="B-">B-</option>
+              <option value="AB+">AB+</option>
+              <option value="AB-">AB-</option>
+            </select>
+          </div>
+          <div>
+            <label for="filtro-estado">Estado del Expediente</label>
+            <select id="filtro-estado">
+              <option value="">Todos los estados</option>
+              <option value="Completo">Completos (100%)</option>
+              <option value="Incompleto">Incompletos</option>
+              <option value="Sin iniciar">Sin Iniciar</option>
+            </select>
+          </div>
+          <label class="chk">
+            <input type="checkbox" id="chk-alergias"> Con alergias
+          </label>
+          <label class="chk">
+            <input type="checkbox" id="chk-restricciones"> Con restricciones físicas
+          </label>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="acciones">
+          <button class="btn sec" id="btn-exportar-csv" type="button">📊 Descargar Excel (CSV)</button>
+          <button class="btn sec" id="btn-imprimir-lote" type="button">🖨️ Imprimir Seleccionados</button>
+          <a class="btn sec" href="admin-solicitudes.html">📋 Gestionar Solicitudes</a>
+          <a class="btn" href="registro-trabajador.html" target="_blank" style="margin-left:auto">+ Registrar Nuevo Colaborador</a>
+        </div>
+
+        <p id="contador-registros" style="margin:10px 0 0;font-size:13px;color:var(--mute)"></p>
+      </div>
+
+      <!-- Tabla de Colaboradores -->
+      <div class="tbl">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:36px"><input type="checkbox" id="chk-todos" aria-label="Seleccionar todos"></th>
+              <th>Cédula</th>
+              <th>Nombre Completo</th>
+              <th>Puesto</th>
+              <th>Sangre</th>
+              <th>Estado</th>
+              <th>Aptitud Laboral</th>
+              <th style="text-align:right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="admin-rows">
+            <tr>
+              <td colspan="8" style="text-align:center;padding:24px">Cargando datos de Firestore...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
