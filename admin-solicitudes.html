@@ -11,26 +11,93 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body data-page="adminsol">
-  <main class="wrap" style="max-width:1240px">
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px">
-      <div>
-        <h1 style="margin:0">Gestión de Solicitudes</h1>
-        <span style="font-size:13.5px;color:var(--mute)">Citas, justificaciones e incapacidades de los colaboradores</span>
+
+  <div id="admin-app" class="ad-app">
+    <aside class="ad-sidebar">
+      <div class="ad-brand">
+        <span class="ad-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7V3Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="ad-brand-text"><strong>ASADA Salud</strong><small>Panel administrativo</small></span>
       </div>
-      <a class="btn sec sm" href="admin.html">← Volver al Panel</a>
-    </div>
 
-    <div id="alerta-sol-admin" class="alert hidden" role="status" aria-live="polite"></div>
+      <nav class="ad-nav" aria-label="Navegación del panel">
+        <div class="ad-nav-group">
+          <p class="ad-nav-label">Gestión</p>
+          <a class="ad-nav-item" href="admin.html">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg>
+            <span>Resumen</span>
+          </a>
+          <a class="ad-nav-item" href="admin.html">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5M16 5.5a3 3 0 0 1 0 5.8M18 20c0-2.2-.8-3.7-2.3-4.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span>Expedientes</span>
+          </a>
+        </div>
 
-    <div class="sol-layout">
-      <aside class="card accent" style="margin:0">
-        <h2 style="font-size:1.05rem">Colaboradores</h2>
-        <input id="buscar-colab" type="search" placeholder="Buscar por nombre, cédula o puesto">
-        <div id="lista-colab" class="colab-list"></div>
-      </aside>
-      <section id="panel-sol"><p class="vacio">Cargando...</p></section>
+        <div class="ad-nav-group">
+          <p class="ad-nav-label">Atención al colaborador</p>
+          <a class="ad-nav-item on" href="admin-solicitudes.html" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span>Solicitudes</span>
+          </a>
+          <a class="ad-nav-item" href="admin.html">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Herramientas</span>
+          </a>
+        </div>
+
+        <div class="ad-nav-group">
+          <p class="ad-nav-label">Accesos</p>
+          <a class="ad-nav-item" href="registro-trabajador.html" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M4 20c0-3.4 2.7-5.7 6-5.7 1.3 0 2.5.3 3.4 1M18 8v6M15 11h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span>Nuevo colaborador</span>
+          </a>
+          <a class="ad-nav-item" href="index.html">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 11 12 4l8 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v10h12V10" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            <span>Sitio principal</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="ad-sidebar-foot">
+        <a class="ad-nav-item ad-logout" href="admin.html">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Volver al panel</span>
+        </a>
+      </div>
+    </aside>
+
+    <div class="ad-content">
+      <header class="ad-topbar">
+        <div class="ad-crumbs"><span>Salud Ocupacional</span> / <strong>Solicitudes</strong></div>
+        <div class="ad-topbar-right">
+          <span class="ad-user">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Administración
+          </span>
+          <button class="ad-menu-toggle" id="ad-menu-toggle" type="button" aria-label="Abrir menú">☰</button>
+        </div>
+      </header>
+
+      <main class="ad-main">
+        <div class="ad-page-head">
+          <h1>Gestión de Solicitudes</h1>
+          <p>Citas, justificaciones e incapacidades de los colaboradores.</p>
+        </div>
+
+        <div id="alerta-sol-admin" class="alert hidden" role="status" aria-live="polite"></div>
+
+        <div class="sol-layout">
+          <aside class="card accent" style="margin:0">
+            <h2 style="font-size:1.05rem">Colaboradores</h2>
+            <input id="buscar-colab" type="search" placeholder="Buscar por nombre, cédula o puesto">
+            <div id="lista-colab" class="colab-list"></div>
+          </aside>
+          <section id="panel-sol"><p class="vacio">Cargando...</p></section>
+        </div>
+      </main>
     </div>
-  </main>
+  </div>
 
   <script type="module" src="app.js"></script>
   <script type="module" src="solicitudes.js"></script>

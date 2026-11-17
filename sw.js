@@ -1,5 +1,5 @@
 // Service Worker para ASADA Bijagua de Upala
-const CACHE_NAME = "asada-salud-v3";
+const CACHE_NAME = "asada-salud-v5";
 const ASSETS_TO_CACHE = [
   "./",
   "index.html",
