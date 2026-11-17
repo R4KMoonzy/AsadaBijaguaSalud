@@ -1271,11 +1271,19 @@ img { max-width: 100%; height: auto; }
   .acc-row { flex-wrap: wrap; }
 }
 
-/* Viewport dinámico: evita saltos con el teclado en celular */
+/* Viewport dinámico: evita saltos con el teclado en celular.
+   El menú lateral debe poder deslizarse cuando hay muchas opciones. */
 .ad-app, .ad-gate { min-height: calc(100dvh - 40px); }
-.ad-sidebar { height: calc(100dvh - 40px); }
+.ad-sidebar {
+  height: calc(100dvh - 40px);
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
 @media (max-width: 900px) {
-  .ad-sidebar { height: 100dvh; }
+  .ad-sidebar { height: 100dvh; max-height: 100dvh; }
   .ad-gate { min-height: calc(100dvh - 40px); }
 }
 
