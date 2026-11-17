@@ -12,114 +12,214 @@
 </head>
 <body data-page="admin">
 
-  <main class="wrap">
-    <div id="alerta-admin" class="alert hidden" role="alert" aria-live="polite"></div>
+  <!-- Acceso -->
+  <div id="admin-gate" class="ad-gate">
+    <form id="form-admin-gate" class="ad-login" autocomplete="on">
+      <span class="ad-login-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="ad-login-eyebrow">ASADA Bijagua de Upala</span>
+      <h1>Administración y Salud Ocupacional</h1>
+      <p class="ad-login-lead">Acceso reservado para la jefatura y el personal autorizado de salud ocupacional.</p>
+      <div class="ad-field">
+        <label for="admin-pass">Contraseña de acceso</label>
+        <input id="admin-pass" type="password" placeholder="••••••••" autocomplete="current-password" required autofocus>
+      </div>
+      <button class="btn ad-login-btn" type="submit">Ingresar al panel</button>
+      <p class="ad-login-foot">Uso interno · Información confidencial</p>
+    </form>
+  </div>
 
-    <!-- Puerta de acceso con clave administrativa -->
-    <div id="admin-gate">
-      <form id="form-admin-gate" class="card accent narrow" style="margin:40px auto">
-        <h1>Administración y Salud Ocupacional</h1>
-        <p style="font-size:13.5px;color:var(--mute);margin-bottom:18px">
-          Acceso reservado para la jefatura de la ASADA Bijagua de Upala y personal autorizado de salud ocupacional.
-        </p>
-        <div style="margin-bottom:16px">
-          <label for="admin-pass">Contraseña de Acceso</label>
-          <input id="admin-pass" type="password" placeholder="••••••••" autocomplete="current-password" required autofocus>
+  <!-- Panel organizado -->
+  <div id="admin-app" class="ad-app hidden">
+    <aside class="ad-sidebar">
+      <div class="ad-brand">
+        <span class="ad-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7V3Z" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>
+        </span>
+        <span class="ad-brand-text"><strong>ASADA Salud</strong><small>Panel administrativo</small></span>
+      </div>
+
+      <nav class="ad-nav" aria-label="Navegación del panel">
+        <div class="ad-nav-group">
+          <p class="ad-nav-label">Gestión</p>
+          <button type="button" class="ad-nav-item on" data-view="resumen">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="3" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="3" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="14" y="14" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg>
+            <span>Resumen</span>
+          </button>
+          <button type="button" class="ad-nav-item" data-view="expedientes">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 5.5a3 3 0 0 1 0 5.8M18 20c0-2.2-.8-3.7-2.3-4.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span>Expedientes</span>
+          </button>
         </div>
-        <button class="btn" style="width:100%">Ingresar al Panel</button>
-      </form>
+
+        <div class="ad-nav-group">
+          <p class="ad-nav-label">Atención al colaborador</p>
+          <a class="ad-nav-item" href="admin-solicitudes.html">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span>Solicitudes</span>
+          </a>
+          <button type="button" class="ad-nav-item" data-view="herramientas">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Herramientas</span>
+          </button>
+        </div>
+
+        <div class="ad-nav-group">
+          <p class="ad-nav-label">Accesos</p>
+          <a class="ad-nav-item" href="registro-trabajador.html" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M4 20c0-3.4 2.7-5.7 6-5.7 1.3 0 2.5.3 3.4 1M18 8v6M15 11h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span>Nuevo colaborador</span>
+          </a>
+          <a class="ad-nav-item" href="index.html">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 11 12 4l8 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v10h12V10" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            <span>Sitio principal</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="ad-sidebar-foot">
+        <button type="button" class="ad-nav-item ad-logout" id="btn-cerrar-admin">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="ad-content">
+      <header class="ad-topbar">
+        <div class="ad-crumbs"><span>Salud Ocupacional</span> / <strong id="ad-crumb">Resumen</strong></div>
+        <div class="ad-topbar-right">
+          <span class="ad-user">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Administración
+          </span>
+          <button class="ad-menu-toggle" id="ad-menu-toggle" type="button" aria-label="Abrir menú">☰</button>
+        </div>
+      </header>
+
+      <main class="ad-main">
+        <div class="ad-page-head">
+          <h1 id="ad-title">Resumen general</h1>
+          <p id="ad-desc">Indicadores del programa de salud ocupacional de la ASADA.</p>
+          <p class="ad-tip" id="ad-tip" hidden></p>
+        </div>
+
+        <div id="alerta-admin" class="alert hidden" role="alert" aria-live="polite"></div>
+
+        <section id="admin-panel">
+
+          <!-- Resumen -->
+          <div class="ad-view" data-view="resumen">
+            <div class="stats" id="admin-stats" aria-label="Resumen de expedientes"></div>
+            <div class="ad-quick">
+              <button type="button" class="ad-quick-card" data-go="expedientes">
+                <span class="qc-ico"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5M16 5.5a3 3 0 0 1 0 5.8M18 20c0-2.2-.8-3.7-2.3-4.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+                <strong>Expedientes</strong>
+                <small>Buscar, filtrar y actualizar la aptitud laboral.</small>
+              </button>
+              <a class="ad-quick-card" href="admin-solicitudes.html">
+                <span class="qc-ico"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="17" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+                <strong>Solicitudes</strong>
+                <small>Citas, justificaciones e incapacidades pendientes.</small>
+              </a>
+              <button type="button" class="ad-quick-card" data-go="herramientas">
+                <span class="qc-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <strong>Herramientas</strong>
+                <small>Exportar la base de datos a Excel (CSV).</small>
+              </button>
+            </div>
+          </div>
+
+          <!-- Expedientes -->
+          <div class="ad-view hidden" data-view="expedientes">
+            <div class="card accent">
+              <h2 style="font-size:1.1rem;margin-bottom:14px">Filtrar colaboradores</h2>
+              <div class="filtros">
+                <div style="flex:2 1 240px">
+                  <label for="filtro-busqueda">Buscar por cédula, nombre o puesto</label>
+                  <input id="filtro-busqueda" type="search" placeholder="Escriba para filtrar al instante...">
+                </div>
+                <div>
+                  <label for="filtro-sangre">Grupo sanguíneo</label>
+                  <select id="filtro-sangre">
+                    <option value="">Todos los grupos</option>
+                    <option value="O+">O+</option><option value="O-">O-</option>
+                    <option value="A+">A+</option><option value="A-">A-</option>
+                    <option value="B+">B+</option><option value="B-">B-</option>
+                    <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="filtro-estado">Estado del expediente</label>
+                  <select id="filtro-estado">
+                    <option value="">Todos los estados</option>
+                    <option value="Completo">Completos (100%)</option>
+                    <option value="Incompleto">Incompletos</option>
+                    <option value="Sin iniciar">Sin Iniciar</option>
+                  </select>
+                </div>
+                <label class="chk"><input type="checkbox" id="chk-alergias"> Con alergias</label>
+                <label class="chk"><input type="checkbox" id="chk-restricciones"> Con restricciones físicas</label>
+              </div>
+
+              <div class="acciones ad-acciones">
+                <button class="btn sec" id="btn-imprimir-lote" type="button">Imprimir seleccionados</button>
+                <a class="btn sec" href="admin-solicitudes.html">Gestionar solicitudes</a>
+                <a class="btn" href="registro-trabajador.html" target="_blank" rel="noopener" style="margin-left:auto">+ Registrar colaborador</a>
+              </div>
+
+              <p id="contador-registros" style="margin:10px 0 0;font-size:13px;color:var(--mute)"></p>
+            </div>
+
+            <div class="tbl">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:36px"><input type="checkbox" id="chk-todos" aria-label="Seleccionar todos"></th>
+                    <th>Cédula</th><th>Nombre completo</th><th>Puesto</th>
+                    <th>Sangre</th><th>Estado</th><th>Aptitud laboral</th>
+                    <th style="text-align:right">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-rows">
+                  <tr><td colspan="8" style="text-align:center;padding:24px">Cargando datos de Firestore...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Herramientas -->
+          <div class="ad-view hidden" data-view="herramientas">
+            <div class="ad-tool-grid">
+              <div class="ad-tool-card">
+                <span class="qc-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v3h16v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                <h3>Exportar base de datos</h3>
+                <p>Descargue todos los expedientes en formato Excel (CSV), con acentos y caracteres en español.</p>
+                <button class="btn" id="btn-exportar-csv" type="button">Descargar Excel (CSV)</button>
+              </div>
+              <div class="ad-tool-card">
+                <span class="qc-ico"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="4" width="14" height="17" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+                <h3>Solicitudes del personal</h3>
+                <p>Revise y responda citas, justificaciones e incapacidades enviadas por los colaboradores.</p>
+                <a class="btn sec" href="admin-solicitudes.html">Gestionar solicitudes</a>
+              </div>
+              <div class="ad-tool-card">
+                <span class="qc-ico"><svg viewBox="0 0 24 24" fill="none"><circle cx="10" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M4 20c0-3.4 2.7-5.7 6-5.7 1.3 0 2.5.3 3.4 1M18 8v6M15 11h6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+                <h3>Nuevo colaborador</h3>
+                <p>Abra el formulario de registro para agregar un colaborador y crear su expediente.</p>
+                <a class="btn sec" href="registro-trabajador.html" target="_blank" rel="noopener">Abrir registro</a>
+              </div>
+            </div>
+            <div class="ad-note">
+              <strong>Confidencialidad:</strong> la información de salud ocupacional está protegida según la Ley N° 8968. No comparta las credenciales de acceso ni exporte datos sin autorización.
+            </div>
+          </div>
+
+        </section>
+      </main>
     </div>
-
-    <!-- Panel de control principal (se muestra al iniciar sesión) -->
-    <section id="admin-panel" class="hidden">
-      
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:20px">
-        <div>
-          <h1 style="margin:0">Panel de Expedientes de Colaboradores</h1>
-          <span style="font-size:13.5px;color:var(--mute)">Base de Datos en Tiempo Real — ASADA Bijagua de Upala</span>
-        </div>
-        <button class="btn sec sm" id="btn-cerrar-admin" type="button">Cerrar Sesión Administrativa</button>
-      </div>
-
-      <!-- Tarjetas de Estadísticas -->
-      <div class="stats" id="admin-stats" aria-label="Resumen de expedientes"></div>
-
-      <!-- Barra de Filtros y Búsqueda -->
-      <div class="card accent">
-        <h2 style="font-size:1.1rem;margin-bottom:14px">Filtrar Colaboradores</h2>
-        
-        <div class="filtros">
-          <div style="flex:2 1 240px">
-            <label for="filtro-busqueda">Buscar por cédula, nombre o puesto</label>
-            <input id="filtro-busqueda" type="search" placeholder="Escriba para filtrar al instante...">
-          </div>
-          <div>
-            <label for="filtro-sangre">Grupo Sanguíneo</label>
-            <select id="filtro-sangre">
-              <option value="">Todos los grupos</option>
-              <option value="O+">O+</option>
-              <option value="O-">O-</option>
-              <option value="A+">A+</option>
-              <option value="A-">A-</option>
-              <option value="B+">B+</option>
-              <option value="B-">B-</option>
-              <option value="AB+">AB+</option>
-              <option value="AB-">AB-</option>
-            </select>
-          </div>
-          <div>
-            <label for="filtro-estado">Estado del Expediente</label>
-            <select id="filtro-estado">
-              <option value="">Todos los estados</option>
-              <option value="Completo">Completos (100%)</option>
-              <option value="Incompleto">Incompletos</option>
-              <option value="Sin iniciar">Sin Iniciar</option>
-            </select>
-          </div>
-          <label class="chk">
-            <input type="checkbox" id="chk-alergias"> Con alergias
-          </label>
-          <label class="chk">
-            <input type="checkbox" id="chk-restricciones"> Con restricciones físicas
-          </label>
-        </div>
-
-        <!-- Botones de Acción -->
-        <div class="acciones">
-          <button class="btn sec" id="btn-exportar-csv" type="button">📊 Descargar Excel (CSV)</button>
-          <button class="btn sec" id="btn-imprimir-lote" type="button">🖨️ Imprimir Seleccionados</button>
-          <a class="btn sec" href="admin-solicitudes.html">📋 Gestionar Solicitudes</a>
-          <a class="btn" href="registro-trabajador.html" target="_blank" style="margin-left:auto">+ Registrar Nuevo Colaborador</a>
-        </div>
-
-        <p id="contador-registros" style="margin:10px 0 0;font-size:13px;color:var(--mute)"></p>
-      </div>
-
-      <!-- Tabla de Colaboradores -->
-      <div class="tbl">
-        <table>
-          <thead>
-            <tr>
-              <th style="width:36px"><input type="checkbox" id="chk-todos" aria-label="Seleccionar todos"></th>
-              <th>Cédula</th>
-              <th>Nombre Completo</th>
-              <th>Puesto</th>
-              <th>Sangre</th>
-              <th>Estado</th>
-              <th>Aptitud Laboral</th>
-              <th style="text-align:right">Acciones</th>
-            </tr>
-          </thead>
-          <tbody id="admin-rows">
-            <tr>
-              <td colspan="8" style="text-align:center;padding:24px">Cargando datos de Firestore...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-    </section>
-  </main>
+  </div>
 
   <script type="module" src="app.js"></script>
 </body>

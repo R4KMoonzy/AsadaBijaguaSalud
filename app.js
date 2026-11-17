@@ -125,14 +125,37 @@ function inicializarShell() {
     localStorage.setItem("asada_acc", JSON.stringify(accesibilidad));
   };
 
-  // Barra de gobierno y accesibilidad
+  // Barra institucional (los controles de accesibilidad ahora son una burbuja flotante)
   const topBarHtml = `
     <div class="gov-top-bar">
       <span>Panel de Salud — Acueductos Comunitarios | ASADA Bijagua de Upala</span>
-      <div class="tools">
-        <button type="button" id="btn-font-minus" aria-label="Reducir tamaño de letra">A-</button>
-        <button type="button" id="btn-font-plus" aria-label="Aumentar tamaño de letra">A+</button>
-        <button type="button" id="btn-contrast" aria-label="Alternar alto contraste">Contraste</button>
+    </div>
+  `;
+
+  const accesibilidadHtml = `
+    <div id="accesibilidad-flotante" class="acc-float">
+      <button type="button" class="acc-bubble" id="acc-bubble" aria-label="Abrir opciones de accesibilidad" aria-expanded="false" aria-controls="acc-panel" title="Accesibilidad">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="4" r="1.8" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M4.5 8.6c2.4 1.2 4.8 1.8 7.5 1.8s5.1-.6 7.5-1.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M12 10.4V15m0 0-4.2 6m4.2-6 4.2 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="acc-panel" id="acc-panel" role="group" aria-label="Ajustes de accesibilidad" hidden>
+        <p class="acc-title">Accesibilidad</p>
+        <div class="acc-row">
+          <span>Tamaño de texto</span>
+          <div class="acc-btns">
+            <button type="button" id="acc-fs-menos" aria-label="Reducir tamaño de letra">A-</button>
+            <button type="button" id="acc-fs-reset" aria-label="Restablecer tamaño de letra">A</button>
+            <button type="button" id="acc-fs-mas" aria-label="Aumentar tamaño de letra">A+</button>
+          </div>
+        </div>
+        <div class="acc-row">
+          <span>Alto contraste</span>
+          <button type="button" class="acc-switch" id="acc-contraste" role="switch" aria-checked="false" aria-label="Alternar alto contraste"><span></span></button>
+        </div>
+        <p class="acc-hint">Toque la burbuja para abrir o cerrar.</p>
       </div>
     </div>
   `;
@@ -193,23 +216,50 @@ function inicializarShell() {
     </footer>
   `;
 
-  document.body.insertAdjacentHTML("afterbegin", topBarHtml + navHtml);
-  document.body.insertAdjacentHTML("beforeend", modalEmergHtml + footerHtml);
+  const mainEl = $("main");
+  if (mainEl && !mainEl.id) mainEl.id = "contenido-principal";
+  const skipHtml = `<a class="skip-link" href="#contenido-principal">Saltar al contenido principal</a>`;
+  document.body.insertAdjacentHTML("afterbegin", skipHtml + topBarHtml + navHtml);
+  document.body.insertAdjacentHTML("beforeend", modalEmergHtml + footerHtml + accesibilidadHtml);
 
-  // Asignar eventos de accesibilidad
+  // Burbuja de accesibilidad
   aplicarAccesibilidad();
-  $("#btn-font-minus")?.addEventListener("click", () => {
+  const accBubble = $("#acc-bubble");
+  const accPanel = $("#acc-panel");
+  const setAccAbierto = (abierto) => {
+    if (accPanel) accPanel.hidden = !abierto;
+    accBubble?.setAttribute("aria-expanded", String(!!abierto));
+  };
+  accBubble?.addEventListener("click", e => {
+    e.stopPropagation();
+    setAccAbierto(accPanel?.hidden);
+  });
+  document.addEventListener("click", e => {
+    if (!e.target.closest("#accesibilidad-flotante")) setAccAbierto(false);
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") setAccAbierto(false);
+  });
+  $("#acc-fs-menos")?.addEventListener("click", () => {
     accesibilidad.fs = Math.max(0.85, +(accesibilidad.fs - 0.1).toFixed(2));
     aplicarAccesibilidad();
   });
-  $("#btn-font-plus")?.addEventListener("click", () => {
+  $("#acc-fs-mas")?.addEventListener("click", () => {
     accesibilidad.fs = Math.min(1.4, +(accesibilidad.fs + 0.1).toFixed(2));
     aplicarAccesibilidad();
   });
-  $("#btn-contrast")?.addEventListener("click", () => {
-    accesibilidad.hc = accesibilidad.hc ? 0 : 1;
+  $("#acc-fs-reset")?.addEventListener("click", () => {
+    accesibilidad.fs = 1;
     aplicarAccesibilidad();
   });
+  const accSwitch = $("#acc-contraste");
+  const actualizarSwitch = () => accSwitch?.setAttribute("aria-checked", String(!!accesibilidad.hc));
+  accSwitch?.addEventListener("click", () => {
+    accesibilidad.hc = accesibilidad.hc ? 0 : 1;
+    aplicarAccesibilidad();
+    actualizarSwitch();
+  });
+  actualizarSwitch();
 
   // Cerrar sesión
   $("#btn-cerrar-sesion")?.addEventListener("click", e => {
@@ -557,6 +607,7 @@ const controladores = {
     const alerta = $("#alerta-admin");
     const gate = $("#admin-gate");
     const panel = $("#admin-panel");
+    const appShell = $("#admin-app");
     const formGate = $("#form-admin-gate");
     const passInput = $("#admin-pass");
 
@@ -565,6 +616,7 @@ const controladores = {
 
     if (!verificarAcceso()) {
       if (gate) gate.classList.remove("hidden");
+      if (appShell) appShell.classList.add("hidden");
       if (panel) panel.classList.add("hidden");
 
       formGate?.addEventListener("submit", async e => {
@@ -589,7 +641,43 @@ const controladores = {
 
     // Acceso concedido: mostrar panel
     if (gate) gate.classList.add("hidden");
+    if (appShell) appShell.classList.remove("hidden");
     if (panel) panel.classList.remove("hidden");
+
+    // Navegación interna del panel (vistas) — menú lateral ordenado
+    const VIEW_META = {
+      resumen: {
+        t: "Resumen general",
+        d: "Indicadores del programa de salud ocupacional de la ASADA.",
+        tip: "Los indicadores se actualizan automáticamente con cada cambio en los expedientes. Use el menú lateral para gestionar la información."
+      },
+      expedientes: {
+        t: "Expedientes de colaboradores",
+        d: "Busque, filtre y actualice la aptitud laboral del personal.",
+        tip: "Seleccione las casillas de la tabla para imprimir en lote. El cambio de aptitud se guarda automáticamente en Firestore."
+      },
+      herramientas: {
+        t: "Herramientas y datos",
+        d: "Exporte la base de datos y acceda a los formularios de registro.",
+        tip: "La exportación a CSV incluye todos los expedientes y conserva los acentos para su correcta visualización en Excel."
+      }
+    };
+    const navItems = $$(".ad-nav-item[data-view]");
+    const views = $$(".ad-view");
+    const setView = (v) => {
+      const meta = VIEW_META[v] || VIEW_META.resumen;
+      navItems.forEach(b => b.classList.toggle("on", b.dataset.view === v));
+      views.forEach(s => s.classList.toggle("hidden", s.dataset.view !== v));
+      const crumb = $("#ad-crumb"), title = $("#ad-title"), desc = $("#ad-desc"), tip = $("#ad-tip");
+      if (crumb) crumb.textContent = meta.t;
+      if (title) title.textContent = meta.t;
+      if (desc) desc.textContent = meta.d;
+      if (tip) { tip.textContent = meta.tip || ""; tip.hidden = !meta.tip; }
+      appShell?.classList.remove("menu-open");
+    };
+    navItems.forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
+    $$(".ad-quick-card[data-go]").forEach(b => b.addEventListener("click", () => setView(b.dataset.go)));
+    setView("resumen");
 
     const statsContenedor = $("#admin-stats");
     const tablaFilas = $("#admin-rows");
@@ -1152,10 +1240,21 @@ const controladores = {
   }
 };
 
+// Menú lateral del panel administrativo (compatible con móvil)
+function inicializarAdminShell() {
+  const appShell = $("#admin-app");
+  const toggle = $("#ad-menu-toggle");
+  toggle?.addEventListener("click", () => appShell?.classList.toggle("menu-open"));
+  $$(".ad-nav-item").forEach(a => {
+    if (a.tagName === "A") a.addEventListener("click", () => appShell?.classList.remove("menu-open"));
+  });
+}
+
 // Inicialización de la aplicación
 document.addEventListener("DOMContentLoaded", () => {
   inicializarShell();
   const paginaActual = document.body.dataset.page;
+  if (paginaActual === "admin" || paginaActual === "adminsol") inicializarAdminShell();
   if (paginaActual && controladores[paginaActual]) {
     controladores[paginaActual]();
   }
