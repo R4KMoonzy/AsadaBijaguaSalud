@@ -612,8 +612,8 @@ const controladores = {
     const passInput = $("#admin-pass");
 
     const iniciarPanel = async () => {
-      if (gate) gate.classList.add("hidden");
-      if (appShell) appShell.classList.remove("hidden");
+      if (gate) { gate.classList.add("hidden"); gate.style.display = "none"; }
+      if (appShell) { appShell.classList.remove("hidden"); appShell.style.display = ""; }
       if (panel) panel.classList.remove("hidden");
 
       // Navegación interna del panel (vistas) — menú lateral ordenado
@@ -930,14 +930,23 @@ const controladores = {
       renderizarTabla();
     };
 
-    // El portal admin siempre solicita contraseña de administrador.
-    // El código de emergencia no da acceso al panel administrativo.
+    // Exponer inicio de panel para el gate inline de admin.html.
+    window.__iniciarPanelAdmin = iniciarPanel;
+    if (window.__adminGatePassed || esAdmin()) {
+      await iniciarPanel();
+      return;
+    }
+
+    // Fallback si el gate inline no se ejecutó.
     sessionStorage.removeItem("asada_admin");
     sessionStorage.removeItem("asada_emerg");
     const mostrarGate = () => {
-      if (gate) { gate.classList.remove("hidden"); gate.style.display = ""; }
-      if (appShell) appShell.classList.add("hidden");
+      if (gate) { gate.classList.remove("hidden"); gate.style.display = "flex"; }
+      if (appShell) { appShell.classList.add("hidden"); appShell.style.display = "none"; }
       if (panel) panel.classList.add("hidden");
+      const field = $("#ad-field-pass") || gate?.querySelector(".ad-field");
+      if (field) field.style.cssText = "display:block!important;visibility:visible!important;opacity:1!important;height:auto!important;overflow:visible!important;text-align:left;margin-bottom:16px;";
+      if (passInput) passInput.style.cssText = "display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;height:48px!important;padding:10px 14px!important;font-size:16px!important;line-height:1.4!important;color:#1f2937!important;background:#fbfdff!important;border:1.5px solid #b7cce0!important;border-radius:8px!important;box-sizing:border-box!important;";
     };
     mostrarGate();
     setTimeout(mostrarGate, 0);
