@@ -619,21 +619,38 @@ const controladores = {
       if (appShell) appShell.classList.add("hidden");
       if (panel) panel.classList.add("hidden");
 
+      const alertaGate = $("#alerta-admin-gate") || alerta;
+      const btnGate = $("#btn-admin-gate") || formGate?.querySelector("button[type='submit']");
+
       formGate?.addEventListener("submit", async e => {
         e.preventDefault();
         const clave = passInput?.value.trim() || "";
-        const hash = await sha256(clave);
+        if (!clave) {
+          mostrarAlerta(alertaGate, "Ingrese la contraseña de acceso.");
+          return;
+        }
 
-        if (hash === HASH_ADMIN || clave === "admin123") {
-          sessionStorage.setItem("asada_admin", "1");
-          await registrarBitacora("Ingreso administrativo exitoso");
-          location.reload();
-        } else if (hash === HASH_EMERG || clave === "9119") {
-          sessionStorage.setItem("asada_emerg", "1");
-          await registrarBitacora("Ingreso directo a planilla de emergencia");
-          location.href = "emergencia.html";
-        } else {
-          mostrarAlerta(alerta, "Contraseña incorrecta. Utilice la contraseña autorizada.");
+        if (btnGate) { btnGate.disabled = true; btnGate.textContent = "Verificando..."; }
+        try {
+          const hash = await sha256(clave);
+          if (hash === HASH_ADMIN || clave === "admin123") {
+            sessionStorage.setItem("asada_admin", "1");
+            try { await registrarBitacora("Ingreso administrativo exitoso"); } catch (_) {}
+            location.reload();
+            return;
+          }
+          if (hash === HASH_EMERG || clave === "9119") {
+            sessionStorage.setItem("asada_emerg", "1");
+            try { await registrarBitacora("Ingreso directo a planilla de emergencia"); } catch (_) {}
+            location.href = "emergencia.html";
+            return;
+          }
+          mostrarAlerta(alertaGate, "Contraseña incorrecta. Utilice la contraseña autorizada.");
+        } catch (err) {
+          console.error("Error en acceso admin:", err);
+          mostrarAlerta(alertaGate, "No se pudo validar el acceso: " + (err?.message || "error inesperado."));
+        } finally {
+          if (btnGate) { btnGate.disabled = false; btnGate.textContent = "Ingresar al panel"; }
         }
       });
       return;
