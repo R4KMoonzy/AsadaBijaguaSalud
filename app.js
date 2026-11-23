@@ -611,368 +611,364 @@ const controladores = {
     const formGate = $("#form-admin-gate");
     const passInput = $("#admin-pass");
 
-    // Verificar si ya está autenticado como admin
-    const verificarAcceso = () => esAdmin();
+    const iniciarPanel = async () => {
+      if (gate) gate.classList.add("hidden");
+      if (appShell) appShell.classList.remove("hidden");
+      if (panel) panel.classList.remove("hidden");
 
-    if (!verificarAcceso()) {
-      if (gate) gate.classList.remove("hidden");
-      if (appShell) appShell.classList.add("hidden");
-      if (panel) panel.classList.add("hidden");
-
-      const alertaGate = $("#alerta-admin-gate") || alerta;
-      const btnGate = $("#btn-admin-gate") || formGate?.querySelector("button[type='submit']");
-
-      formGate?.addEventListener("submit", async e => {
-        e.preventDefault();
-        const clave = passInput?.value.trim() || "";
-        if (!clave) {
-          mostrarAlerta(alertaGate, "Ingrese la contraseña de acceso.");
-          return;
+      // Navegación interna del panel (vistas) — menú lateral ordenado
+      const VIEW_META = {
+        resumen: {
+          t: "Resumen general",
+          d: "Indicadores del programa de salud ocupacional de la ASADA.",
+          tip: "Los indicadores se actualizan automáticamente con cada cambio en los expedientes. Use el menú lateral para gestionar la información."
+        },
+        expedientes: {
+          t: "Expedientes de colaboradores",
+          d: "Busque, filtre y actualice la aptitud laboral del personal.",
+          tip: "Seleccione las casillas de la tabla para imprimir en lote. El cambio de aptitud se guarda automáticamente en Firestore."
+        },
+        herramientas: {
+          t: "Herramientas y datos",
+          d: "Exporte la base de datos y acceda a los formularios de registro.",
+          tip: "La exportación a CSV incluye todos los expedientes y conserva los acentos para su correcta visualización en Excel."
         }
+      };
+      const navItems = $$(".ad-nav-item[data-view]");
+      const views = $$(".ad-view");
+      const setView = (v) => {
+        const meta = VIEW_META[v] || VIEW_META.resumen;
+        navItems.forEach(b => b.classList.toggle("on", b.dataset.view === v));
+        views.forEach(s => s.classList.toggle("hidden", s.dataset.view !== v));
+        const crumb = $("#ad-crumb"), title = $("#ad-title"), desc = $("#ad-desc"), tip = $("#ad-tip");
+        if (crumb) crumb.textContent = meta.t;
+        if (title) title.textContent = meta.t;
+        if (desc) desc.textContent = meta.d;
+        if (tip) { tip.textContent = meta.tip || ""; tip.hidden = !meta.tip; }
+        appShell?.classList.remove("menu-open");
+      };
+      navItems.forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
+      $$(".ad-quick-card[data-go]").forEach(b => b.addEventListener("click", () => setView(b.dataset.go)));
+      setView("resumen");
 
-        if (btnGate) { btnGate.disabled = true; btnGate.textContent = "Verificando..."; }
-        try {
-          const hash = await sha256(clave);
-          if (hash === HASH_ADMIN || clave === "admin123") {
-            sessionStorage.setItem("asada_admin", "1");
-            try { await registrarBitacora("Ingreso administrativo exitoso"); } catch (_) {}
-            location.reload();
-            return;
-          }
-          if (hash === HASH_EMERG || clave === "9119") {
-            sessionStorage.setItem("asada_emerg", "1");
-            try { await registrarBitacora("Ingreso directo a planilla de emergencia"); } catch (_) {}
-            location.href = "emergencia.html";
-            return;
-          }
-          mostrarAlerta(alertaGate, "Contraseña incorrecta. Utilice la contraseña autorizada.");
-        } catch (err) {
-          console.error("Error en acceso admin:", err);
-          mostrarAlerta(alertaGate, "No se pudo validar el acceso: " + (err?.message || "error inesperado."));
-        } finally {
-          if (btnGate) { btnGate.disabled = false; btnGate.textContent = "Ingresar al panel"; }
-        }
-      });
-      return;
-    }
+      const statsContenedor = $("#admin-stats");
+      const tablaFilas = $("#admin-rows");
+      const inputFiltro = $("#filtro-busqueda");
+      const selectSangre = $("#filtro-sangre");
+      const selectEstado = $("#filtro-estado");
+      const chkAlergias = $("#chk-alergias");
+      const chkRestricciones = $("#chk-restricciones");
+      const contadorRegistros = $("#contador-registros");
+      const chkSeleccionarTodos = $("#chk-todos");
+      const btnExportarCsv = $("#btn-exportar-csv");
+      const btnImprimirLote = $("#btn-imprimir-lote");
+      const btnCerrarAdmin = $("#btn-cerrar-admin");
 
-    // Acceso concedido: mostrar panel
-    if (gate) gate.classList.add("hidden");
-    if (appShell) appShell.classList.remove("hidden");
-    if (panel) panel.classList.remove("hidden");
-
-    // Navegación interna del panel (vistas) — menú lateral ordenado
-    const VIEW_META = {
-      resumen: {
-        t: "Resumen general",
-        d: "Indicadores del programa de salud ocupacional de la ASADA.",
-        tip: "Los indicadores se actualizan automáticamente con cada cambio en los expedientes. Use el menú lateral para gestionar la información."
-      },
-      expedientes: {
-        t: "Expedientes de colaboradores",
-        d: "Busque, filtre y actualice la aptitud laboral del personal.",
-        tip: "Seleccione las casillas de la tabla para imprimir en lote. El cambio de aptitud se guarda automáticamente en Firestore."
-      },
-      herramientas: {
-        t: "Herramientas y datos",
-        d: "Exporte la base de datos y acceda a los formularios de registro.",
-        tip: "La exportación a CSV incluye todos los expedientes y conserva los acentos para su correcta visualización en Excel."
-      }
-    };
-    const navItems = $$(".ad-nav-item[data-view]");
-    const views = $$(".ad-view");
-    const setView = (v) => {
-      const meta = VIEW_META[v] || VIEW_META.resumen;
-      navItems.forEach(b => b.classList.toggle("on", b.dataset.view === v));
-      views.forEach(s => s.classList.toggle("hidden", s.dataset.view !== v));
-      const crumb = $("#ad-crumb"), title = $("#ad-title"), desc = $("#ad-desc"), tip = $("#ad-tip");
-      if (crumb) crumb.textContent = meta.t;
-      if (title) title.textContent = meta.t;
-      if (desc) desc.textContent = meta.d;
-      if (tip) { tip.textContent = meta.tip || ""; tip.hidden = !meta.tip; }
-      appShell?.classList.remove("menu-open");
-    };
-    navItems.forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
-    $$(".ad-quick-card[data-go]").forEach(b => b.addEventListener("click", () => setView(b.dataset.go)));
-    setView("resumen");
-
-    const statsContenedor = $("#admin-stats");
-    const tablaFilas = $("#admin-rows");
-    const inputFiltro = $("#filtro-busqueda");
-    const selectSangre = $("#filtro-sangre");
-    const selectEstado = $("#filtro-estado");
-    const chkAlergias = $("#chk-alergias");
-    const chkRestricciones = $("#chk-restricciones");
-    const contadorRegistros = $("#contador-registros");
-    const chkSeleccionarTodos = $("#chk-todos");
-    const btnExportarCsv = $("#btn-exportar-csv");
-    const btnImprimirLote = $("#btn-imprimir-lote");
-    const btnCerrarAdmin = $("#btn-cerrar-admin");
-
-    btnCerrarAdmin?.addEventListener("click", () => {
-      sessionStorage.removeItem("asada_admin");
-      sessionStorage.removeItem("asada_emerg");
-      location.href = "index.html";
-    });
-
-    let listaTrabajadores = [];
-    const seleccionados = new Set();
-
-    // Cargar todos los trabajadores desde Firestore
-    try {
-      tablaFilas.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px">Cargando datos de Firestore...</td></tr>`;
-      listaTrabajadores = await obtenerTodosTrabajadores();
-    } catch (err) {
-      console.error("Error cargando trabajadores:", err);
-      mostrarAlerta(alerta, "No se pudieron obtener los registros de Firestore: " + err.message);
-      tablaFilas.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--red);padding:24px">Error de conexión con la base de datos.</td></tr>`;
-      return;
-    }
-
-    // Renderizar estadísticas del Dashboard
-    const actualizarStats = () => {
-      if (!statsContenedor) return;
-      const total = listaTrabajadores.length;
-      let completos = 0;
-      let incompletos = 0;
-      let sinIniciar = 0;
-      let conAlergias = 0;
-      let conRestricciones = 0;
-
-      listaTrabajadores.forEach(t => {
-        const est = calcularEstadoExpediente(t).texto;
-        if (est === "Completo") completos++;
-        else if (est.startsWith("Incompleto")) incompletos++;
-        else sinIniciar++;
-
-        if (t.expediente?.alergias?.trim()) conAlergias++;
-        if (t.expediente?.limitaciones?.trim()) conRestricciones++;
+      btnCerrarAdmin?.addEventListener("click", () => {
+        sessionStorage.removeItem("asada_admin");
+        sessionStorage.removeItem("asada_emerg");
+        location.href = "index.html";
       });
 
-      statsContenedor.innerHTML = `
-        <div class="stat"><b>${total}</b><span>Colaboradores</span></div>
-        <div class="stat" style="border-left-color:var(--green)"><b>${completos}</b><span>Completos</span></div>
-        <div class="stat" style="border-left-color:var(--amber)"><b>${incompletos}</b><span>Incompletos</span></div>
-        <div class="stat" style="border-left-color:var(--red)"><b>${sinIniciar}</b><span>Sin Iniciar</span></div>
-        <div class="stat" style="border-left-color:var(--teal)"><b>${conAlergias}</b><span>Con Alergias</span></div>
-      `;
-    };
+      let listaTrabajadores = [];
+      const seleccionados = new Set();
 
-    // Renderizar tabla con filtros aplicados
-    const renderizarTabla = () => {
-      const q = (inputFiltro?.value || "").toLowerCase().trim();
-      const sangreVal = selectSangre?.value || "";
-      const estadoVal = selectEstado?.value || "";
-      const soloAlergias = chkAlergias?.checked || false;
-      const soloRestricciones = chkRestricciones?.checked || false;
-
-      const filtrados = listaTrabajadores.filter(t => {
-        const textoBusqueda = `${t.cedula} ${t.nombre} ${t.puesto} ${t.telefono || ""}`.toLowerCase();
-        if (q && !textoBusqueda.includes(q)) return false;
-
-        const sangre = t.expediente?.sangre || "";
-        if (sangreVal && sangre !== sangreVal) return false;
-
-        const est = calcularEstadoExpediente(t).texto;
-        if (estadoVal) {
-          if (estadoVal === "Completo" && est !== "Completo") return false;
-          if (estadoVal === "Incompleto" && !est.startsWith("Incompleto")) return false;
-          if (estadoVal === "Sin iniciar" && est !== "Sin iniciar") return false;
-        }
-
-        if (soloAlergias && !t.expediente?.alergias?.trim()) return false;
-        if (soloRestricciones && !t.expediente?.limitaciones?.trim()) return false;
-
-        return true;
-      });
-
-      if (contadorRegistros) {
-        contadorRegistros.textContent = `Mostrando ${filtrados.length} de ${listaTrabajadores.length} registros`;
-      }
-
-      if (filtrados.length === 0) {
-        tablaFilas.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--mute)">No se encontraron colaboradores que coincidan con los filtros.</td></tr>`;
+      // Cargar todos los trabajadores desde Firestore
+      try {
+        tablaFilas.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px">Cargando datos de Firestore...</td></tr>`;
+        listaTrabajadores = await obtenerTodosTrabajadores();
+      } catch (err) {
+        console.error("Error cargando trabajadores:", err);
+        mostrarAlerta(alerta, "No se pudieron obtener los registros de Firestore: " + err.message);
+        tablaFilas.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--red);padding:24px">Error de conexión con la base de datos.</td></tr>`;
         return;
       }
 
-      tablaFilas.innerHTML = filtrados.map(t => {
-        const est = calcularEstadoExpediente(t);
-        const aptActual = t.aptitud?.estado || "Sin evaluar";
-        const sangre = t.expediente?.sangre || "—";
-        const isChecked = seleccionados.has(t.cedula);
+      // Renderizar estadísticas del Dashboard
+      const actualizarStats = () => {
+        if (!statsContenedor) return;
+        const total = listaTrabajadores.length;
+        let completos = 0;
+        let incompletos = 0;
+        let sinIniciar = 0;
+        let conAlergias = 0;
+        let conRestricciones = 0;
 
-        return `
-          <tr>
-            <td>
-              <input type="checkbox" class="chk-fila" data-cedula="${escapeHtml(t.cedula)}" ${isChecked ? "checked" : ""}>
-            </td>
-            <td><strong>${escapeHtml(t.cedula)}</strong></td>
-            <td>${escapeHtml(t.nombre)}</td>
-            <td>${escapeHtml(t.puesto || "—")}</td>
-            <td><span class="badge" style="background:#e0f2fe;color:#0369a1">${escapeHtml(sangre)}</span></td>
-            <td><span class="badge ${est.clase}">${est.texto}</span></td>
-            <td>
-              <select class="sel-aptitud" data-cedula="${escapeHtml(t.cedula)}" style="padding:4px 8px;font-size:12.5px">
-                <option value="Sin evaluar" ${aptActual === "Sin evaluar" ? "selected" : ""}>Sin evaluar</option>
-                <option value="Apto" ${aptActual === "Apto" ? "selected" : ""}>Apto</option>
-                <option value="Apto con restricciones" ${aptActual === "Apto con restricciones" ? "selected" : ""}>Apto con restricciones</option>
-                <option value="No apto" ${aptActual === "No apto" ? "selected" : ""}>No apto</option>
-              </select>
-            </td>
-            <td style="white-space:nowrap">
-              <a class="btn sec sm" href="expediente.html?id=${encodeURIComponent(t.cedula)}" title="Ver e imprimir ficha completa">Ficha PDF</a>
-              <a class="btn sec sm" href="expediente.html?id=${encodeURIComponent(t.cedula)}&tarjeta=1" title="Ver tarjeta de bolsillo">Tarjeta</a>
-              <button class="btn sm btn-eliminar" data-cedula="${escapeHtml(t.cedula)}" data-nombre="${escapeHtml(t.nombre)}" style="background:#dc2626;color:#fff;padding:6px 9px" title="Eliminar registro">✕</button>
-            </td>
-          </tr>
+        listaTrabajadores.forEach(t => {
+          const est = calcularEstadoExpediente(t).texto;
+          if (est === "Completo") completos++;
+          else if (est.startsWith("Incompleto")) incompletos++;
+          else sinIniciar++;
+
+          if (t.expediente?.alergias?.trim()) conAlergias++;
+          if (t.expediente?.limitaciones?.trim()) conRestricciones++;
+        });
+
+        statsContenedor.innerHTML = `
+          <div class="stat"><b>${total}</b><span>Colaboradores</span></div>
+          <div class="stat" style="border-left-color:var(--green)"><b>${completos}</b><span>Completos</span></div>
+          <div class="stat" style="border-left-color:var(--amber)"><b>${incompletos}</b><span>Incompletos</span></div>
+          <div class="stat" style="border-left-color:var(--red)"><b>${sinIniciar}</b><span>Sin Iniciar</span></div>
+          <div class="stat" style="border-left-color:var(--teal)"><b>${conAlergias}</b><span>Con Alergias</span></div>
         `;
-      }).join("");
+      };
 
-      // Eventos de selección de filas
-      tablaFilas.querySelectorAll(".chk-fila").forEach(chk => {
-        chk.addEventListener("change", e => {
-          const c = e.target.dataset.cedula;
-          if (e.target.checked) seleccionados.add(c);
-          else seleccionados.delete(c);
-        });
-      });
+      // Renderizar tabla con filtros aplicados
+      const renderizarTabla = () => {
+        const q = (inputFiltro?.value || "").toLowerCase().trim();
+        const sangreVal = selectSangre?.value || "";
+        const estadoVal = selectEstado?.value || "";
+        const soloAlergias = chkAlergias?.checked || false;
+        const soloRestricciones = chkRestricciones?.checked || false;
 
-      // Eventos de cambio de aptitud laboral en vivo
-      tablaFilas.querySelectorAll(".sel-aptitud").forEach(sel => {
-        sel.addEventListener("change", async e => {
-          const c = e.target.dataset.cedula;
-          const nuevoValor = e.target.value;
-          try {
-            await guardarTrabajador(c, {
-              aptitud: {
-                estado: nuevoValor,
-                fecha: fechaHoy()
-              }
-            }, true);
-            const trab = listaTrabajadores.find(x => x.cedula === c);
-            if (trab) trab.aptitud = { estado: nuevoValor, fecha: fechaHoy() };
-            mostrarAlerta(alerta, `Aptitud laboral actualizada para la cédula ${c}: ${nuevoValor}`, "ok");
-          } catch (err) {
-            console.error("Error al actualizar aptitud:", err);
-            mostrarAlerta(alerta, "No se pudo actualizar la aptitud laboral en Firestore.");
+        const filtrados = listaTrabajadores.filter(t => {
+          const textoBusqueda = `${t.cedula} ${t.nombre} ${t.puesto} ${t.telefono || ""}`.toLowerCase();
+          if (q && !textoBusqueda.includes(q)) return false;
+
+          const sangre = t.expediente?.sangre || "";
+          if (sangreVal && sangre !== sangreVal) return false;
+
+          const est = calcularEstadoExpediente(t).texto;
+          if (estadoVal) {
+            if (estadoVal === "Completo" && est !== "Completo") return false;
+            if (estadoVal === "Incompleto" && !est.startsWith("Incompleto")) return false;
+            if (estadoVal === "Sin iniciar" && est !== "Sin iniciar") return false;
           }
-        });
-      });
 
-      // Eventos de eliminar colaborador
-      tablaFilas.querySelectorAll(".btn-eliminar").forEach(btn => {
-        btn.addEventListener("click", async e => {
-          const c = e.target.dataset.cedula;
-          const n = e.target.dataset.nombre;
-          if (confirm(`¿Está seguro de que desea eliminar el expediente de ${n} (Cédula ${c})? Esta acción borrará la información de Firestore.`)) {
+          if (soloAlergias && !t.expediente?.alergias?.trim()) return false;
+          if (soloRestricciones && !t.expediente?.limitaciones?.trim()) return false;
+
+          return true;
+        });
+
+        if (contadorRegistros) {
+          contadorRegistros.textContent = `Mostrando ${filtrados.length} de ${listaTrabajadores.length} registros`;
+        }
+
+        if (filtrados.length === 0) {
+          tablaFilas.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--mute)">No se encontraron colaboradores que coincidan con los filtros.</td></tr>`;
+          return;
+        }
+
+        tablaFilas.innerHTML = filtrados.map(t => {
+          const est = calcularEstadoExpediente(t);
+          const aptActual = t.aptitud?.estado || "Sin evaluar";
+          const sangre = t.expediente?.sangre || "—";
+          const isChecked = seleccionados.has(t.cedula);
+
+          return `
+            <tr>
+              <td>
+                <input type="checkbox" class="chk-fila" data-cedula="${escapeHtml(t.cedula)}" ${isChecked ? "checked" : ""}>
+              </td>
+              <td><strong>${escapeHtml(t.cedula)}</strong></td>
+              <td>${escapeHtml(t.nombre)}</td>
+              <td>${escapeHtml(t.puesto || "—")}</td>
+              <td><span class="badge" style="background:#e0f2fe;color:#0369a1">${escapeHtml(sangre)}</span></td>
+              <td><span class="badge ${est.clase}">${est.texto}</span></td>
+              <td>
+                <select class="sel-aptitud" data-cedula="${escapeHtml(t.cedula)}" style="padding:4px 8px;font-size:12.5px">
+                  <option value="Sin evaluar" ${aptActual === "Sin evaluar" ? "selected" : ""}>Sin evaluar</option>
+                  <option value="Apto" ${aptActual === "Apto" ? "selected" : ""}>Apto</option>
+                  <option value="Apto con restricciones" ${aptActual === "Apto con restricciones" ? "selected" : ""}>Apto con restricciones</option>
+                  <option value="No apto" ${aptActual === "No apto" ? "selected" : ""}>No apto</option>
+                </select>
+              </td>
+              <td style="white-space:nowrap">
+                <a class="btn sec sm" href="expediente.html?id=${encodeURIComponent(t.cedula)}" title="Ver e imprimir ficha completa">Ficha PDF</a>
+                <a class="btn sec sm" href="expediente.html?id=${encodeURIComponent(t.cedula)}&tarjeta=1" title="Ver tarjeta de bolsillo">Tarjeta</a>
+                <button class="btn sm btn-eliminar" data-cedula="${escapeHtml(t.cedula)}" data-nombre="${escapeHtml(t.nombre)}" style="background:#dc2626;color:#fff;padding:6px 9px" title="Eliminar registro">✕</button>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+        // Eventos de selección de filas
+        tablaFilas.querySelectorAll(".chk-fila").forEach(chk => {
+          chk.addEventListener("change", e => {
+            const c = e.target.dataset.cedula;
+            if (e.target.checked) seleccionados.add(c);
+            else seleccionados.delete(c);
+          });
+        });
+
+        // Eventos de cambio de aptitud laboral en vivo
+        tablaFilas.querySelectorAll(".sel-aptitud").forEach(sel => {
+          sel.addEventListener("change", async e => {
+            const c = e.target.dataset.cedula;
+            const nuevoValor = e.target.value;
             try {
-              await eliminarTrabajador(c);
-              await registrarBitacora("Colaborador eliminado", `Cédula: ${c} - ${n}`);
-              listaTrabajadores = listaTrabajadores.filter(x => x.cedula !== c);
-              seleccionados.delete(c);
-              mostrarAlerta(alerta, `Expediente de ${n} eliminado con éxito.`, "ok");
-              actualizarStats();
-              renderizarTabla();
+              await guardarTrabajador(c, {
+                aptitud: {
+                  estado: nuevoValor,
+                  fecha: fechaHoy()
+                }
+              }, true);
+              const trab = listaTrabajadores.find(x => x.cedula === c);
+              if (trab) trab.aptitud = { estado: nuevoValor, fecha: fechaHoy() };
+              mostrarAlerta(alerta, `Aptitud laboral actualizada para la cédula ${c}: ${nuevoValor}`, "ok");
             } catch (err) {
-              mostrarAlerta(alerta, "Error al eliminar en Firestore: " + err.message);
+              console.error("Error al actualizar aptitud:", err);
+              mostrarAlerta(alerta, "No se pudo actualizar la aptitud laboral en Firestore.");
             }
-          }
+          });
         });
+
+        // Eventos de eliminar colaborador
+        tablaFilas.querySelectorAll(".btn-eliminar").forEach(btn => {
+          btn.addEventListener("click", async e => {
+            const c = e.target.dataset.cedula;
+            const n = e.target.dataset.nombre;
+            if (confirm(`¿Está seguro de que desea eliminar el expediente de ${n} (Cédula ${c})? Esta acción borrará la información de Firestore.`)) {
+              try {
+                await eliminarTrabajador(c);
+                await registrarBitacora("Colaborador eliminado", `Cédula: ${c} - ${n}`);
+                listaTrabajadores = listaTrabajadores.filter(x => x.cedula !== c);
+                seleccionados.delete(c);
+                mostrarAlerta(alerta, `Expediente de ${n} eliminado con éxito.`, "ok");
+                actualizarStats();
+                renderizarTabla();
+              } catch (err) {
+                mostrarAlerta(alerta, "Error al eliminar en Firestore: " + err.message);
+              }
+            }
+          });
+        });
+      };
+
+      // Eventos de filtros
+      [inputFiltro, selectSangre, selectEstado, chkAlergias, chkRestricciones].forEach(el => {
+        el?.addEventListener("input", renderizarTabla);
+        el?.addEventListener("change", renderizarTabla);
       });
+
+      // Seleccionar todos
+      chkSeleccionarTodos?.addEventListener("change", e => {
+        const q = (inputFiltro?.value || "").toLowerCase().trim();
+        const visibleRows = listaTrabajadores.filter(t => {
+          if (!q) return true;
+          return `${t.cedula} ${t.nombre} ${t.puesto}`.toLowerCase().includes(q);
+        });
+
+        visibleRows.forEach(t => {
+          if (e.target.checked) seleccionados.add(t.cedula);
+          else seleccionados.delete(t.cedula);
+        });
+        renderizarTabla();
+      });
+
+      // Imprimir en lote los seleccionados
+      btnImprimirLote?.addEventListener("click", () => {
+        if (seleccionados.size === 0) {
+          return mostrarAlerta(alerta, "Por favor seleccione al menos una casilla de la tabla para imprimir en lote.");
+        }
+        const idsParam = [...seleccionados].join(",");
+        window.open(`expediente.html?ids=${encodeURIComponent(idsParam)}`, "_blank");
+      });
+
+      // Exportar a Excel (CSV)
+      btnExportarCsv?.addEventListener("click", () => {
+        if (listaTrabajadores.length === 0) {
+          return mostrarAlerta(alerta, "No hay datos para exportar.");
+        }
+
+        const encabezados = [
+          "Cédula", "Nombre", "Puesto", "Teléfono", "Correo",
+          "Estado Expediente", "Aptitud Laboral", "Grupo Sanguíneo", "Tétanos",
+          "EBAIS Adscrito", "Alergias", "Enfermedades Crónicas", "Medicamentos",
+          "Limitaciones Físicas", "Contacto 1 Nombre", "Contacto 1 Teléfono",
+          "Contacto 2 Nombre", "Contacto 2 Teléfono", "Provincia", "Cantón", "Distrito", "Dirección"
+        ];
+
+        const filasCsv = [encabezados.map(h => `"${h}"`).join(",")];
+
+        listaTrabajadores.forEach(t => {
+          const exp = t.expediente || {};
+          const fila = [
+            t.cedula,
+            t.nombre,
+            t.puesto || "",
+            t.telefono || exp.telefono || "",
+            t.email || exp.email || "",
+            calcularEstadoExpediente(t).texto,
+            t.aptitud?.estado || "Sin evaluar",
+            exp.sangre || "",
+            exp.tetanos || "",
+            exp.ebais || "",
+            (exp.alergias || "").replace(/[\r\n]+/g, " "),
+            (exp.cronicas || "").replace(/[\r\n]+/g, " "),
+            (exp.medicamentos || "").replace(/[\r\n]+/g, " "),
+            (exp.limitaciones || "").replace(/[\r\n]+/g, " "),
+            exp.c1_nombre || "",
+            exp.c1_tel || "",
+            exp.c2_nombre || "",
+            exp.c2_tel || "",
+            exp.provincia || "",
+            exp.canton || "",
+            exp.distrito || "",
+            (exp.direccion || "").replace(/[\r\n]+/g, " ")
+          ];
+          filasCsv.push(fila.map(val => `"${String(val ?? "").replace(/"/g, '""')}"`).join(","));
+        });
+
+        // Agregar BOM (\ufeff) para que Excel reconozca tildes y caracteres en español correctamente
+        const csvContenido = "\ufeff" + filasCsv.join("\r\n");
+        const blob = new Blob([csvContenido], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const enlace = document.createElement("a");
+        enlace.href = url;
+        enlace.download = `expedientes_asada_bijagua_${fechaHoy()}.csv`;
+        document.body.appendChild(enlace);
+        enlace.click();
+        document.body.removeChild(enlace);
+        URL.revokeObjectURL(url);
+
+        mostrarAlerta(alerta, "Archivo CSV exportado exitosamente.", "ok");
+      });
+
+      actualizarStats();
+      renderizarTabla();
     };
 
-    // Eventos de filtros
-    [inputFiltro, selectSangre, selectEstado, chkAlergias, chkRestricciones].forEach(el => {
-      el?.addEventListener("input", renderizarTabla);
-      el?.addEventListener("change", renderizarTabla);
-    });
+    // El portal admin siempre solicita contraseña de administrador.
+    // El código de emergencia no da acceso al panel administrativo.
+    sessionStorage.removeItem("asada_admin");
+    if (gate) gate.classList.remove("hidden");
+    if (appShell) appShell.classList.add("hidden");
+    if (panel) panel.classList.add("hidden");
 
-    // Seleccionar todos
-    chkSeleccionarTodos?.addEventListener("change", e => {
-      const q = (inputFiltro?.value || "").toLowerCase().trim();
-      const visibleRows = listaTrabajadores.filter(t => {
-        if (!q) return true;
-        return `${t.cedula} ${t.nombre} ${t.puesto}`.toLowerCase().includes(q);
-      });
+    const alertaGate = $("#alerta-admin-gate") || alerta;
+    const btnGate = $("#btn-admin-gate") || formGate?.querySelector("button[type='submit']");
 
-      visibleRows.forEach(t => {
-        if (e.target.checked) seleccionados.add(t.cedula);
-        else seleccionados.delete(t.cedula);
-      });
-      renderizarTabla();
-    });
-
-    // Imprimir en lote los seleccionados
-    btnImprimirLote?.addEventListener("click", () => {
-      if (seleccionados.size === 0) {
-        return mostrarAlerta(alerta, "Por favor seleccione al menos una casilla de la tabla para imprimir en lote.");
-      }
-      const idsParam = [...seleccionados].join(",");
-      window.open(`expediente.html?ids=${encodeURIComponent(idsParam)}`, "_blank");
-    });
-
-    // Exportar a Excel (CSV)
-    btnExportarCsv?.addEventListener("click", () => {
-      if (listaTrabajadores.length === 0) {
-        return mostrarAlerta(alerta, "No hay datos para exportar.");
+    formGate?.addEventListener("submit", async e => {
+      e.preventDefault();
+      const clave = passInput?.value.trim() || "";
+      if (!clave) {
+        mostrarAlerta(alertaGate, "Ingrese la contraseña de acceso.");
+        return;
       }
 
-      const encabezados = [
-        "Cédula", "Nombre", "Puesto", "Teléfono", "Correo",
-        "Estado Expediente", "Aptitud Laboral", "Grupo Sanguíneo", "Tétanos",
-        "EBAIS Adscrito", "Alergias", "Enfermedades Crónicas", "Medicamentos",
-        "Limitaciones Físicas", "Contacto 1 Nombre", "Contacto 1 Teléfono",
-        "Contacto 2 Nombre", "Contacto 2 Teléfono", "Provincia", "Cantón", "Distrito", "Dirección"
-      ];
-
-      const filasCsv = [encabezados.map(h => `"${h}"`).join(",")];
-
-      listaTrabajadores.forEach(t => {
-        const exp = t.expediente || {};
-        const fila = [
-          t.cedula,
-          t.nombre,
-          t.puesto || "",
-          t.telefono || exp.telefono || "",
-          t.email || exp.email || "",
-          calcularEstadoExpediente(t).texto,
-          t.aptitud?.estado || "Sin evaluar",
-          exp.sangre || "",
-          exp.tetanos || "",
-          exp.ebais || "",
-          (exp.alergias || "").replace(/[\r\n]+/g, " "),
-          (exp.cronicas || "").replace(/[\r\n]+/g, " "),
-          (exp.medicamentos || "").replace(/[\r\n]+/g, " "),
-          (exp.limitaciones || "").replace(/[\r\n]+/g, " "),
-          exp.c1_nombre || "",
-          exp.c1_tel || "",
-          exp.c2_nombre || "",
-          exp.c2_tel || "",
-          exp.provincia || "",
-          exp.canton || "",
-          exp.distrito || "",
-          (exp.direccion || "").replace(/[\r\n]+/g, " ")
-        ];
-        filasCsv.push(fila.map(val => `"${String(val ?? "").replace(/"/g, '""')}"`).join(","));
-      });
-
-      // Agregar BOM (\ufeff) para que Excel reconozca tildes y caracteres en español correctamente
-      const csvContenido = "\ufeff" + filasCsv.join("\r\n");
-      const blob = new Blob([csvContenido], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const enlace = document.createElement("a");
-      enlace.href = url;
-      enlace.download = `expedientes_asada_bijagua_${fechaHoy()}.csv`;
-      document.body.appendChild(enlace);
-      enlace.click();
-      document.body.removeChild(enlace);
-      URL.revokeObjectURL(url);
-
-      mostrarAlerta(alerta, "Archivo CSV exportado exitosamente.", "ok");
+      if (btnGate) { btnGate.disabled = true; btnGate.textContent = "Verificando..."; }
+      try {
+        const hash = await sha256(clave);
+        if (hash === HASH_ADMIN || clave === "admin123") {
+          sessionStorage.setItem("asada_admin", "1");
+          try { await registrarBitacora("Ingreso administrativo exitoso"); } catch (_) {}
+          await iniciarPanel();
+          return;
+        }
+        if (hash === HASH_EMERG || clave === "9119") {
+          mostrarAlerta(alertaGate, "Este es el código de emergencia. Use el botón “Acceso Emergencia” para la planilla de emergencia; el panel administrativo requiere contraseña de administración.");
+          return;
+        }
+        mostrarAlerta(alertaGate, "Contraseña incorrecta. Utilice la contraseña autorizada.");
+      } catch (err) {
+        console.error("Error en acceso admin:", err);
+        mostrarAlerta(alertaGate, "No se pudo validar el acceso: " + (err?.message || "error inesperado."));
+      } finally {
+        if (btnGate) { btnGate.disabled = false; btnGate.textContent = "Ingresar al panel"; }
+      }
     });
-
-    actualizarStats();
-    renderizarTabla();
   },
 
   // PÁGINA: FICHA MÉDICA / TARJETA DE EMERGENCIA (IMPRIMIBLE)
