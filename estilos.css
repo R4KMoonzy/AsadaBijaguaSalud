@@ -877,7 +877,8 @@ body[data-page="adminsol"] { background: var(--bg); }
 }
 .ad-login h1 { font-size: 1.35rem; margin-bottom: 8px; }
 .ad-login-lead { font-size: 13px; color: var(--mute); margin: 0 0 22px; }
-.ad-field { text-align: left; margin-bottom: 16px; }
+.ad-field { display: block !important; text-align: left; margin-bottom: 16px; }
+.ad-gate .ad-field, #form-admin-gate .ad-field { display: block !important; visibility: visible !important; opacity: 1 !important; }
 .ad-login-btn { width: 100%; }
 .ad-login-foot {
   font-size: 11.5px;
