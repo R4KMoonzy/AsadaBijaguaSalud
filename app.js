@@ -933,42 +933,52 @@ const controladores = {
     // El portal admin siempre solicita contraseña de administrador.
     // El código de emergencia no da acceso al panel administrativo.
     sessionStorage.removeItem("asada_admin");
-    if (gate) gate.classList.remove("hidden");
-    if (appShell) appShell.classList.add("hidden");
-    if (panel) panel.classList.add("hidden");
+    sessionStorage.removeItem("asada_emerg");
+    const mostrarGate = () => {
+      if (gate) { gate.classList.remove("hidden"); gate.style.display = ""; }
+      if (appShell) appShell.classList.add("hidden");
+      if (panel) panel.classList.add("hidden");
+    };
+    mostrarGate();
+    setTimeout(mostrarGate, 0);
+    passInput?.focus();
 
     const alertaGate = $("#alerta-admin-gate") || alerta;
     const btnGate = $("#btn-admin-gate") || formGate?.querySelector("button[type='submit']");
 
-    formGate?.addEventListener("submit", async e => {
-      e.preventDefault();
-      const clave = passInput?.value.trim() || "";
-      if (!clave) {
-        mostrarAlerta(alertaGate, "Ingrese la contraseña de acceso.");
-        return;
-      }
+    if (formGate && !formGate.dataset.bound) {
+      formGate.dataset.bound = "1";
+      formGate.addEventListener("submit", async e => {
+        e.preventDefault();
+        const clave = passInput?.value.trim() || "";
+        if (!clave) {
+          mostrarAlerta(alertaGate, "Ingrese la contraseña de acceso.");
+          passInput?.focus();
+          return;
+        }
 
-      if (btnGate) { btnGate.disabled = true; btnGate.textContent = "Verificando..."; }
-      try {
-        const hash = await sha256(clave);
-        if (hash === HASH_ADMIN || clave === "admin123") {
-          sessionStorage.setItem("asada_admin", "1");
-          try { await registrarBitacora("Ingreso administrativo exitoso"); } catch (_) {}
-          await iniciarPanel();
-          return;
+        if (btnGate) { btnGate.disabled = true; btnGate.textContent = "Verificando..."; }
+        try {
+          const hash = await sha256(clave);
+          if (hash === HASH_ADMIN || clave === "admin123") {
+            sessionStorage.setItem("asada_admin", "1");
+            try { await registrarBitacora("Ingreso administrativo exitoso"); } catch (_) {}
+            await iniciarPanel();
+            return;
+          }
+          if (hash === HASH_EMERG || clave === "9119") {
+            mostrarAlerta(alertaGate, "Este es el código de emergencia. Use el botón “Acceso Emergencia” para la planilla de emergencia; el panel administrativo requiere contraseña de administración.");
+            return;
+          }
+          mostrarAlerta(alertaGate, "Contraseña incorrecta. Utilice la contraseña autorizada.");
+        } catch (err) {
+          console.error("Error en acceso admin:", err);
+          mostrarAlerta(alertaGate, "No se pudo validar el acceso: " + (err?.message || "error inesperado."));
+        } finally {
+          if (btnGate) { btnGate.disabled = false; btnGate.textContent = "Ingresar al panel"; }
         }
-        if (hash === HASH_EMERG || clave === "9119") {
-          mostrarAlerta(alertaGate, "Este es el código de emergencia. Use el botón “Acceso Emergencia” para la planilla de emergencia; el panel administrativo requiere contraseña de administración.");
-          return;
-        }
-        mostrarAlerta(alertaGate, "Contraseña incorrecta. Utilice la contraseña autorizada.");
-      } catch (err) {
-        console.error("Error en acceso admin:", err);
-        mostrarAlerta(alertaGate, "No se pudo validar el acceso: " + (err?.message || "error inesperado."));
-      } finally {
-        if (btnGate) { btnGate.disabled = false; btnGate.textContent = "Ingresar al panel"; }
-      }
-    });
+      });
+    }
   },
 
   // PÁGINA: FICHA MÉDICA / TARJETA DE EMERGENCIA (IMPRIMIBLE)
